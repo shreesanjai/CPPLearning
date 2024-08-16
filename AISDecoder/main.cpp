@@ -33,58 +33,60 @@ int main()
     vector<char> AISCharacter(AISInput.begin(), AISInput.end());
     string binary;
 
-    cin >> str;
-    vector<string> literals = split(str, ',');
-
-    // converting to binary Literal
-    string part = literals[5];
-
-    for (char c : part)
+    while (1)
     {
-        int value = AISInput.find(c);
-        binary += decToBinary(value);
-    }
-    // cout << binary << endl;
+        cout << "AIS Packet :";
+        cin >> str;
+        vector<string> literals = split(str, ',');
+        binary.clear();
+        // converting to binary Literal
+        string part = literals[5];
 
-    int msgType;
-    msgType = bitset<6>(binary.substr(0, 6)).to_ulong();
-
-    cout << " ----------------------------------------------- " << endl;
-    cout << " \t\t Ship Message " << endl;
-    cout << " ----------------------------------------------- " << endl;
-    switch (msgType)
-    {
-    case 19:
-    {
-
-        AISMessage19 msg = decodeAISMessage19(binary);
-        displayAISMessage19(msg);
-        break;
-    }
-    case 24:
-    {
-        int type = bitset<2>(binary.substr(38, 2)).to_ulong();
-        // cout << type << endl;
-        if (type == 1)
+        for (char c : part)
         {
-            AISMessage24typeB msg = decodeAISMessage24B(binary);
-            displayAISMessage24B(msg);
+            int value = AISInput.find(c);
+            binary += decToBinary(value);
         }
-        else
+        // cout << binary << endl;
+
+        int msgType;
+        msgType = bitset<6>(binary.substr(0, 6)).to_ulong();
+
+        cout << " ----------------------------------------------- " << endl;
+        switch (msgType)
         {
-            AISMessage24typeA msg = decodeAISMessage24A(binary);
-            displayAISMessage24A(msg);
+        case 19:
+        {
+
+            AISMessage19 msg = decodeAISMessage19(binary);
+            displayAISMessage19(msg);
+            break;
         }
-        break;
-    }
-    default:
-        cout << "Message Type :" << msgType << endl;
-        cout << "Not Coded Yet." << endl;
-        break;
-    }
+        case 24:
+        {
+            int type = bitset<2>(binary.substr(38, 2)).to_ulong();
+            // cout << type << endl;
+            if (type == 1)
+            {
+                AISMessage24typeB msg = decodeAISMessage24B(binary);
+                displayAISMessage24B(msg);
+            }
+            else
+            {
+                AISMessage24typeA msg = decodeAISMessage24A(binary);
+                displayAISMessage24A(msg);
+            }
+            break;
+        }
+        default:
+            cout << "Message Type :" << msgType << endl;
+            cout << "Not Coded Yet." << endl;
+            break;
+        }
 
-    // Checksum Validation
-    cout << ((verifyChecksum(str)) ? "Valid" : "Invalid");
-
+        // Checksum Validation
+        cout << ((verifyChecksum(str)) ? "Valid" : "Invalid") << endl;
+        cout << " ----------------------------------------------- " << endl;
+    }
     return 0;
 }
