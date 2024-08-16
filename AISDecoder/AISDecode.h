@@ -176,6 +176,8 @@ struct AISMessage24typeB{
     unsigned long dimensionToStern;
     unsigned long dimensionToPort;
     unsigned long dimensionToStarboard;
+    unsigned long vessal_length;
+    unsigned long vessal_beam;
     unsigned long motherShip_mmsi;
     unsigned long spare0;
 };
@@ -201,6 +203,10 @@ AISMessage24typeB decodeAISMessage24B(const string& binaryMessage)
     message.dimensionToStarboard = bitset<6>(binaryMessage.substr(156, 6)).to_ulong();
     message.motherShip_mmsi = bitset<30>(binaryMessage.substr(132, 30)).to_ulong();
     message.spare0 = bitset<6>(binaryMessage.substr(162, 6)).to_ulong();
+
+    message.vessal_length = message.dimensionToBow + message.dimensionToStern;
+    message.vessal_beam = message.dimensionToPort + message.dimensionToStarboard;
+    
     return message;
 }
 
@@ -219,6 +225,8 @@ void displayAISMessage24B(const AISMessage24typeB &message)
     cout << "Dimension to Stern: " << message.dimensionToStern << " meters" << endl;
     cout << "Dimension to Port: " << message.dimensionToPort << " meters" << endl;
     cout << "Dimension to Starboard: " << message.dimensionToStarboard << " meters" << endl;
+    cout << "Vessal Length: " << message.vessal_length <<endl;
+    cout << "Vessal Beam: " << message.vessal_beam <<endl;
     cout << "MotherShip MMSI : " << message.motherShip_mmsi << endl;
     cout << "Spare: " << message.spare0 << endl;
 
