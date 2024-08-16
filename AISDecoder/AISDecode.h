@@ -6,7 +6,7 @@
 #include <cmath>
 using namespace std;
 
-string decodeAISName(const string &binaryMessage,int size)
+string decodeAISName(const string &binaryMessage, int size)
 {
     string decodedName;
     const string AIS_CHARSET = " ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^- !\"#$%&'()*+,-./0123456789:;<=>?";
@@ -24,6 +24,7 @@ string decodeAISName(const string &binaryMessage,int size)
 
     return decodedName;
 }
+
 
 struct AISMessage19
 {
@@ -62,8 +63,8 @@ AISMessage19 decodeAISMessage19(const string &binaryMessage)
     message.spare0 = bitset<8>(binaryMessage.substr(38, 8)).to_ulong();
     message.sog = bitset<10>(binaryMessage.substr(46, 10)).to_ulong();
     message.positionAccuracy = bitset<1>(binaryMessage.substr(56, 1)).to_ulong();
-    message.longitude = bitset<28>(binaryMessage.substr(57, 28)).to_ulong()/600000.0;
-    message.latitude = bitset<27>(binaryMessage.substr(85, 27)).to_ulong()/600000.0;
+    message.longitude = bitset<28>(binaryMessage.substr(57, 28)).to_ulong() / 600000.0;
+    message.latitude = bitset<27>(binaryMessage.substr(85, 27)).to_ulong() / 600000.0;
     message.cog = bitset<12>(binaryMessage.substr(112, 12)).to_ulong() / 10.0;
     message.trueHeading = bitset<9>(binaryMessage.substr(124, 9)).to_ulong();
     message.timestamp = bitset<6>(binaryMessage.substr(133, 6)).to_ulong();
@@ -80,19 +81,17 @@ AISMessage19 decodeAISMessage19(const string &binaryMessage)
     message.assignedModeFlag = bitset<1>(binaryMessage.substr(307, 1)).to_ulong();
     message.spare = bitset<4>(binaryMessage.substr(308, 4)).to_ulong();
 
-    while(abs(message.longitude) > 180)
+    while (abs(message.longitude) > 180)
     {
         message.longitude -= 180;
         message.longitude = -message.longitude;
     }
 
-
-    while(abs(message.latitude) > 90)
+    while (abs(message.latitude) > 90)
     {
         message.latitude -= 90;
         message.latitude = -message.latitude;
     }
-
 
     return message;
 }
@@ -110,7 +109,7 @@ void displayAISMessage19(const AISMessage19 &message)
     cout << "True Heading: " << message.trueHeading << " deg" << endl;
     cout << "Timestamp: " << message.timestamp << " seconds" << endl;
     cout << "Regional Reserved: " << message.regionalReserved << endl;
-    cout << "Name: " << decodeAISName(message.name.to_string(),120) << endl;
+    cout << "Name: " << decodeAISName(message.name.to_string(), 120) << endl;
     cout << "Type of Ship and Cargo Type: " << message.typeOfShipAndCargoType << endl;
     cout << "Dimension to Bow: " << message.dimensionToBow << " meters" << endl;
     cout << "Dimension to Stern: " << message.dimensionToStern << " meters" << endl;
@@ -121,13 +120,12 @@ void displayAISMessage19(const AISMessage19 &message)
     cout << "DTE: " << message.dte << endl;
     cout << "Assigned Mode Flag: " << message.assignedModeFlag << endl;
     cout << "Spare: " << message.spare << endl;
-
-    
 }
 
 
 
-struct AISMessage24typeA{
+struct AISMessage24typeA
+{
     unsigned long messageType;
     unsigned long repeatIndicator;
     unsigned long mmsi;
@@ -136,7 +134,7 @@ struct AISMessage24typeA{
     unsigned long spare0;
 };
 
-AISMessage24typeA decodeAISMessage24A(const string& binaryMessage)
+AISMessage24typeA decodeAISMessage24A(const string &binaryMessage)
 {
     AISMessage24typeA message;
 
@@ -156,13 +154,14 @@ void displayAISMessage24A(const AISMessage24typeA &message)
     cout << "Repeat Indicator: " << message.repeatIndicator << endl;
     cout << "MMSI: " << message.mmsi << endl;
     cout << "Part Number: " << message.partNumber << endl;
-    cout << "Name: " << decodeAISName(message.name.to_string(),120) << endl;
+    cout << "Name: " << decodeAISName(message.name.to_string(), 120) << endl;
     cout << "Spare: " << message.spare0 << endl;
 }
 
 
 
-struct AISMessage24typeB{
+struct AISMessage24typeB
+{
     unsigned long messageType;
     unsigned long repeatIndicator;
     unsigned long mmsi;
@@ -182,7 +181,7 @@ struct AISMessage24typeB{
     unsigned long spare0;
 };
 
-AISMessage24typeB decodeAISMessage24B(const string& binaryMessage)
+AISMessage24typeB decodeAISMessage24B(const string &binaryMessage)
 {
     AISMessage24typeB message;
 
@@ -190,13 +189,13 @@ AISMessage24typeB decodeAISMessage24B(const string& binaryMessage)
     message.repeatIndicator = bitset<2>(binaryMessage.substr(6, 2)).to_ulong();
     message.mmsi = bitset<30>(binaryMessage.substr(8, 30)).to_ulong();
     message.partNumber = bitset<2>(binaryMessage.substr(38, 2)).to_ulong();
-    //message.name = bitset<120>(binaryMessage.substr(40, 120));
+    // message.name = bitset<120>(binaryMessage.substr(40, 120));
     message.ShipType = bitset<8>(binaryMessage.substr(40, 8)).to_ulong();
     message.vendorID = bitset<42>(binaryMessage.substr(48, 42));
     message.ModelCode = bitset<4>(binaryMessage.substr(66, 4)).to_ulong();
     message.SerialNumber = bitset<20>(binaryMessage.substr(70, 20)).to_ulong();
     message.callSign = bitset<42>(binaryMessage.substr(90, 42));
-    
+
     message.dimensionToBow = bitset<9>(binaryMessage.substr(132, 9)).to_ulong();
     message.dimensionToStern = bitset<9>(binaryMessage.substr(141, 9)).to_ulong();
     message.dimensionToPort = bitset<6>(binaryMessage.substr(150, 6)).to_ulong();
@@ -206,7 +205,7 @@ AISMessage24typeB decodeAISMessage24B(const string& binaryMessage)
 
     message.vessal_length = message.dimensionToBow + message.dimensionToStern;
     message.vessal_beam = message.dimensionToPort + message.dimensionToStarboard;
-    
+
     return message;
 }
 
@@ -217,18 +216,44 @@ void displayAISMessage24B(const AISMessage24typeB &message)
     cout << "MMSI: " << message.mmsi << endl;
     cout << "Part Number: " << message.partNumber << endl;
     cout << "Ship Type: " << message.ShipType << endl;
-    cout << "Vendor ID: " << decodeAISName(message.vendorID.to_string(),42) << endl;
+    cout << "Vendor ID: " << decodeAISName(message.vendorID.to_string(), 42) << endl;
     cout << "Model Code: " << message.ModelCode << endl;
     cout << "Serial Number: " << message.SerialNumber << endl;
-    cout << "Call Sign : " << decodeAISName(message.callSign.to_string(),42) << endl;
+    cout << "Call Sign : " << decodeAISName(message.callSign.to_string(), 42) << endl;
     cout << "Dimension to Bow: " << message.dimensionToBow << " meters" << endl;
     cout << "Dimension to Stern: " << message.dimensionToStern << " meters" << endl;
     cout << "Dimension to Port: " << message.dimensionToPort << " meters" << endl;
     cout << "Dimension to Starboard: " << message.dimensionToStarboard << " meters" << endl;
-    cout << "Vessal Length: " << message.vessal_length <<endl;
-    cout << "Vessal Beam: " << message.vessal_beam <<endl;
+    cout << "Vessal Length: " << message.vessal_length << endl;
+    cout << "Vessal Beam: " << message.vessal_beam << endl;
     cout << "MotherShip MMSI : " << message.motherShip_mmsi << endl;
     cout << "Spare: " << message.spare0 << endl;
+}
 
-    
+
+
+// Checksum Calculation
+
+string calculateChecksum(const string &str)
+{
+    int checksum = 0;
+    for (int i = 1; i < str.find('*'); i++)
+    {
+        checksum ^= str[i];
+    }
+
+    stringstream ss;
+
+    ss << uppercase << hex << (checksum & 0xFF);
+
+    return ss.str();
+}
+
+bool verifyChecksum(const string &literal)
+{
+    string givenChecksum = literal.substr(literal.find('*') + 1);
+
+    string obtainedChecksum = calculateChecksum(literal);
+
+    return givenChecksum == obtainedChecksum;
 }

@@ -28,12 +28,10 @@ int main()
     // sample : Type 24 A : !AIVDM,1,1,,A,H42O55i18tMET00000000000000,2*6D
     // sample : Type 24 B : !AIVDM,1,1,,A,H42O55lti4hhhilD3nink000?050,0*40
 
-
     string str;
     string AISInput = "0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVW`abcdefghijklmnopqrstuvw";
     vector<char> AISCharacter(AISInput.begin(), AISInput.end());
     string binary;
-
 
     cin >> str;
     vector<string> literals = split(str, ',');
@@ -41,17 +39,15 @@ int main()
     // converting to binary Literal
     string part = literals[5];
 
-
     for (char c : part)
     {
         int value = AISInput.find(c);
         binary += decToBinary(value);
     }
-    //cout << binary << endl;
+    // cout << binary << endl;
 
     int msgType;
     msgType = bitset<6>(binary.substr(0, 6)).to_ulong();
-    //cout << msgType << endl;
 
     cout << " ----------------------------------------------- " << endl;
     cout << " \t\t Ship Message " << endl;
@@ -68,7 +64,7 @@ int main()
     case 24:
     {
         int type = bitset<2>(binary.substr(38, 2)).to_ulong();
-        //cout << type << endl;
+        // cout << type << endl;
         if (type == 1)
         {
             AISMessage24typeB msg = decodeAISMessage24B(binary);
@@ -82,8 +78,13 @@ int main()
         break;
     }
     default:
-        cout << "Unknown message type" << endl;
+        cout << "Message Type :" << msgType << endl;
+        cout << "Not Coded Yet." << endl;
         break;
     }
+
+    // Checksum Validation
+    cout << ((verifyChecksum(str)) ? "Valid" : "Invalid");
+
     return 0;
 }
