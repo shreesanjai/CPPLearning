@@ -27,30 +27,35 @@ int main()
     // sample : Type 19 : !AIVDM,1,1,,B,C5N3SRgPEnJGEBT>NhWAwwo862PaLELTBJ:V00000000S0D:R220,0*0B
     // sample : Type 24 A : !AIVDM,1,1,,A,H42O55i18tMET00000000000000,2*6D
     // sample : Type 24 B : !AIVDM,1,1,,A,H42O55lti4hhhilD3nink000?050,0*40
-    string str;
-    cin >> str;
 
-    // Seperated the AIS Message
+
+    string str;
+    string AISInput = "0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVW`abcdefghijklmnopqrstuvw";
+    vector<char> AISCharacter(AISInput.begin(), AISInput.end());
+    string binary;
+
+
+    cin >> str;
     vector<string> literals = split(str, ',');
 
     // converting to binary Literal
-    string binary;
     string part = literals[5];
 
-    string AISInput = "0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVW'abcdefghijklmnopqrstuvw";
-    vector<char> AISCharacter(AISInput.begin(), AISInput.end());
 
     for (char c : part)
     {
         int value = AISInput.find(c);
         binary += decToBinary(value);
     }
-    cout << binary << endl;
+    //cout << binary << endl;
 
     int msgType;
     msgType = bitset<6>(binary.substr(0, 6)).to_ulong();
-    cout << msgType << endl;
+    //cout << msgType << endl;
 
+    cout << " ----------------------------------------------- " << endl;
+    cout << " \t\t Ship Message " << endl;
+    cout << " ----------------------------------------------- " << endl;
     switch (msgType)
     {
     case 19:
@@ -63,7 +68,7 @@ int main()
     case 24:
     {
         int type = bitset<2>(binary.substr(38, 2)).to_ulong();
-        cout << type << endl;
+        //cout << type << endl;
         if (type == 1)
         {
             AISMessage24typeB msg = decodeAISMessage24B(binary);
